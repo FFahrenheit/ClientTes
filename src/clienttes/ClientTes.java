@@ -15,49 +15,51 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author ivan_
+ * @author ivan_  
  */
 public class ClientTes {
 
     /**
-     * @param args the command line arguments 
+     * @param args the command line arguments
      */
-    public static void main(String[] args) 
-    { 
-            try {    
-            Socket socket = new Socket("127.0.0.1", 1000);
-            String message=null;
-            JsonObject pack = new JsonObject();
-            pack.addProperty("type", "login");
-            JsonObject arg = new JsonObject();
-            arg.addProperty("username", "issi");
-            arg.addProperty("password", "ivan");
-            pack.add("args",arg);
-            
-            Gson gson = new Gson();
-            
-            message = gson.toJson(pack);
-            
-            socket.getOutputStream().write(message.getBytes());
-            System.out.println("Mensaje enviado");
-                            InputStream in = socket.getInputStream();
-                            int av;
-                            
-            while(true)
-            {
-                av = in.available();
-                if(av>0)
-                {                    byte[] resp = new byte[av];
-                    in.read(resp);
-                    if(!new String(resp).equals("p"))
-                    {
-                        System.out.println("Mensaje: "+new String(resp));
-                    }   
+    public static void main(String[] args) throws InterruptedException {
+        while (true) {
+            try {
+                                Thread.sleep(150);
+                Socket socket = new Socket("127.0.0.1", 1000);
+                String message = null;
+                JsonObject pack = new JsonObject();
+                pack.addProperty("type", "login");
+                JsonObject arg = new JsonObject();
+                arg.addProperty("username", "ivan");
+                arg.addProperty("password", "ivan");
+                pack.add("args", arg);
+
+                Gson gson = new Gson();
+
+                message = gson.toJson(pack);
+
+                socket.getOutputStream().write(message.getBytes());
+                System.out.println("Mensaje enviado");
+                InputStream in = socket.getInputStream();
+                int av;
+                boolean rec = false;
+                while (!rec) {
+                    av = in.available();
+                    if (av > 0) {
+                        byte[] resp = new byte[av];
+                        in.read(resp);
+                        if (!new String(resp).equals("p")) {
+                            System.out.println("Mensaje: " + new String(resp));
+                            rec = true;
+                        }
+                    }
                 }
+                socket.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ClientTes.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
-            } catch (IOException  ex) {
-            Logger.getLogger(ClientTes.class.getName()).log(Level.SEVERE, ex.getMessage());
-            }
+        }
     }
-    
+
 }
