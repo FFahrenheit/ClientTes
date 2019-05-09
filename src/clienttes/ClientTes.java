@@ -8,6 +8,7 @@ package clienttes;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,12 +25,12 @@ public class ClientTes {
     public static void main(String[] args) 
     { 
             try {    
-            Socket socket = new Socket("127.0.0.1", 5000);
+            Socket socket = new Socket("127.0.0.1", 1000);
             String message=null;
             JsonObject pack = new JsonObject();
             pack.addProperty("type", "login");
             JsonObject arg = new JsonObject();
-            arg.addProperty("username", "ivan");
+            arg.addProperty("username", "issi");
             arg.addProperty("password", "ivan");
             pack.add("args",arg);
             
@@ -37,18 +38,24 @@ public class ClientTes {
             
             message = gson.toJson(pack);
             
-            Thread.sleep(1000);
             socket.getOutputStream().write(message.getBytes());
             System.out.println("Mensaje enviado");
-            Thread.sleep(1000);
-            while(socket.getInputStream().available()<=0)
+                            InputStream in = socket.getInputStream();
+                            int av;
+                            
+            while(true)
             {
-                
-            };
-            byte[] resp = new byte[socket.getInputStream().available()];
-            socket.getInputStream().read(resp);
-                System.out.println(new String(resp));
-            } catch (IOException | InterruptedException ex) {
+                av = in.available();
+                if(av>0)
+                {                    byte[] resp = new byte[av];
+                    in.read(resp);
+                    if(!new String(resp).equals("p"))
+                    {
+                        System.out.println("Mensaje: "+new String(resp));
+                    }   
+                }
+            }
+            } catch (IOException  ex) {
             Logger.getLogger(ClientTes.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
     }
