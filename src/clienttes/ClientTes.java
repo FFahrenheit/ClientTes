@@ -41,6 +41,13 @@ public class ClientTes {
             socket.getOutputStream().write(message.getBytes());
             System.out.println("Mensaje enviado");
             Thread.sleep(1000);
+            while(socket.getInputStream().available()<=0)
+            {
+                
+            };
+            byte[] resp = new byte[socket.getInputStream().available()];
+            socket.getInputStream().read(resp);
+                System.out.println(new String(resp));
             } catch (IOException | InterruptedException ex) {
             Logger.getLogger(ClientTes.class.getName()).log(Level.SEVERE, ex.getMessage());
             }
